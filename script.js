@@ -98,14 +98,42 @@ const heartImages = [
   "images/img7.jpg",
   "images/img8.jpg",
   "images/img9.jpg",
+  "images/img10.jpg",
+  "images/img11.jpg",
+  "images/img12.jpg",
+  "images/img13.jpg",
+  "images/img14.jpg",
+  "images/img15.jpg",
+  "images/img16.jpg",
 ];
+
+// Xáo trộn danh sách ảnh để giảm trùng lặp liên tục
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+shuffleArray(heartImages);
+///
 
 const loader = new THREE.TextureLoader();
 const numGroups = heartImages.length;
 const pointsPerGroup = Math.floor(galaxyParameters.count / numGroups);
-
+// const pointsPerGroup = Math.floor(galaxyParameters.count * 0.); // 40% hạt sẽ chứa ảnh
 const positions = new Float32Array(galaxyParameters.count * 3);
 const colors = new Float32Array(galaxyParameters.count * 3);
+
+//
+const textures = [];
+
+// Sử dụng danh sách ảnh ngẫu nhiên để giảm trùng lặp
+heartImages.forEach(img => {
+  textures.push(loader.load(img));
+});
+//
+
 
 let pointIdx = 0;
 for (let i = 0; i < galaxyParameters.count; i++) {
@@ -122,7 +150,7 @@ for (let i = 0; i < galaxyParameters.count; i++) {
   const totalAngle = branchAngle + spinAngle;
 
   // Nếu gần tâm thì giảm xác suất tạo point
-  if (radius < 30 && Math.random() < 0.7) continue; // 70% sẽ bỏ qua
+  if (radius < 30 && Math.random() < 0.72) continue; // 72% sẽ bỏ qua
 
   const i3 = pointIdx * 3;
   positions[i3] = Math.cos(totalAngle) * radius + randomX;
@@ -599,11 +627,11 @@ planet.position.set(0, 0, 0);
 scene.add(planet);
 
 // === RING TEXT ===
-const ringTexts = ["27degreeGifts", "Vu Tru cua anh", "I love you"];
+const ringTexts = ["i love you", "Nguyen Ngoc Yen Nhi", "20/03/2005"];
 
 const fontLoader = new FontLoader();
 fontLoader.load(
-  'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json',
+  'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json',// webgl_geometry_text_stroke
   (font) => {
     console.log("Font loaded!");
     createTextRings(font);
@@ -623,7 +651,7 @@ function createTextRings(font) {
 
     // Tính toán góc cần thiết cho một text và khoảng cách giữa các text
     const charWidth = 0.7;
-    const textSpacing = 2.0; // Khoảng cách giữa các lần lặp text
+    const textSpacing = 2.3; // Khoảng cách giữa các lần lặp text
 
     // Tính tổng góc cho một lần text (bao gồm spacing)
     let singleTextAngle = 0;
@@ -633,7 +661,7 @@ function createTextRings(font) {
       charAngles.push(angle);
       singleTextAngle += angle;
     }
-    singleTextAngle += textSpacing / ringRadius; // Thêm spacing
+    singleTextAngle += textSpacing / ringRadius; 
 
     // Tính số lần lặp text để lấp đầy vòng tròn
     const numRepeats = Math.ceil((Math.PI * 2) / singleTextAngle);
@@ -734,6 +762,7 @@ function updateTextRingsRotation() {
         const angleToCamera = Math.atan2(cameraDirection.x, cameraDirection.z);
 
         // Set rotation để chữ hướng về camera
+        // charMesh.rotation.y = angleToCamera;
         charMesh.rotation.y = angleToCamera;
       }
     });
@@ -770,7 +799,7 @@ function animatePlanetSystem() {
 
       // Thêm hiệu ứng dao động nhẹ cho vị trí Y
       const yOffset =
-        Math.sin(time * (userData.tiltSpeed * 0.7) + userData.tiltPhase) * 0.3;
+        Math.sin(time * (userData.tiltSpeed * 0.8) + userData.tiltPhase) * 0.3;
       group.position.y = yOffset;
     });
 
@@ -789,12 +818,12 @@ function animate() {
   controls.update();
 
   // Cập nhật shader bão
-  planet.material.uniforms.time.value = time * 0.5;
+  planet.material.uniforms.time.value = time * 0.4;
 
   // Fade opacity các object phụ khi intro bắt đầu
   if (fadeInProgress && fadeOpacity < 1.0) {
     fadeOpacity += 0.025; // tốc độ tăng, có thể chỉnh
-    if (fadeOpacity > 1.0) fadeOpacity = 1.0;
+    if (fadeOpacity > 1.5) fadeOpacity = 1.5;
   }
 
   if (!introStarted) {
@@ -1059,7 +1088,7 @@ let galaxyAudio = null;
 
 function playGalaxyAudio() {
   if (!galaxyAudio) {
-    galaxyAudio = new Audio("https://files.catbox.moe/6iqvxp.mp3");
+    galaxyAudio = new Audio("https://files.thanhtuan.click/1749558540633_audioclip-1749558428000-58514.mp4");
     galaxyAudio.loop = true;
     galaxyAudio.volume = 0.7;
   }
