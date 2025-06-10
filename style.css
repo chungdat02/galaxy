@@ -1,0 +1,209 @@
+html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+#container {
+  width: 100vw;
+  height: 100vh; /* hoặc: height: calc(var(--vh, 1vh) * 100); */
+  background: radial-gradient(circle at center, #000010 0%, #000000 100%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 11;
+}
+
+/* Cảnh báo landscape phong cách vũ trụ */
+#landscape-warning {
+  /* position: fixed;
+  z-index: 9999;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(ellipse at center, #1a237e 0%, #000 100%);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.7s cubic-bezier(.4,2,.6,1); */
+  display: none !important;
+}
+/* body.landscape-warning-active #landscape-warning,
+body.portrait #landscape-warning {
+  opacity: 1;
+  pointer-events: auto;
+} */
+
+#landscape-warning .warning-content {
+  position: relative;
+  z-index: 2;
+  padding: 2rem 2.5rem;
+  border-radius: 24px;
+  background: rgba(20, 30, 60, 0.7);
+  box-shadow: 0 0 32px 8px #00eaff44, 0 0 0 2px #fff2 inset;
+  border: 1.5px solid #00eaff88;
+}
+#landscape-warning h1 {
+  font-family: 'Orbitron', 'Montserrat', Arial, sans-serif;
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+  letter-spacing: 2px;
+  color: #fff;
+  
+}
+#landscape-warning p {
+  font-size: 1.3rem;
+  color: #e0eaff;
+  text-shadow: 0 0 8px #00eaff99, 0 0 2px #fff;
+}
+#landscape-warning .stars-bg {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle, #fff 1.2px, transparent 1.2px) 20px 30px/80px 80px repeat,
+    radial-gradient(circle, #fff 1.5px, transparent 1.5px) 60px 80px/120px 120px repeat,
+    radial-gradient(circle, #00eaff 1.2px, transparent 1.2px) 40px 60px/100px 100px repeat,
+    radial-gradient(circle, #fff 0.8px, transparent 0.8px) 10px 10px/40px 40px repeat;
+  opacity: 0.7;
+  animation: stars-move 16s linear infinite;
+}
+#landscape-warning .stars-bg::before,
+#landscape-warning .stars-bg::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0; left: 0;
+  background-image:
+    radial-gradient(circle, #fff 1.2px, transparent 1.2px),
+    radial-gradient(circle, #00eaff 1.2px, transparent 1.2px),
+    radial-gradient(circle, #fff 0.8px, transparent 0.8px);
+  background-size: 80px 80px, 120px 120px, 40px 40px;
+  background-position: 0 0, 40px 40px, 20px 20px;
+  opacity: 0.7;
+  animation: stars-move 16s linear infinite;
+}
+#landscape-warning .stars-bg::after {
+  opacity: 0.5;
+  background-size: 120px 120px, 60px 60px, 100px 100px;
+  background-position: 60px 60px, 30px 30px, 10px 10px;
+  animation-duration: 24s;
+}
+@keyframes stars-move {
+  0% { background-position: 20px 30px, 60px 80px, 40px 60px, 10px 10px; }
+  100% { background-position: 100px 100px, 0px 0px, 60px 60px, 40px 40px; }
+}
+
+#start-overlay {
+  display: none !important;
+  position: fixed;
+  z-index: 10000;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(10, 20, 40, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#start-btn {
+  font-size: 2rem;
+  padding: 1rem 2.5rem;
+  border-radius: 2rem;
+  border: none;
+  background: linear-gradient(90deg, #ffb6e6, #a259c7, #00eaff);
+  color: #fff;
+  box-shadow: 0 0 24px #fff6, 0 0 8px #00eaff;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+#start-btn:hover {
+  background: linear-gradient(90deg, #00eaff, #a259c7, #ffb6e6);
+}
+
+#dark-overlay {
+  position: fixed;
+  z-index: 5;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(10, 10, 30, 0.92);
+  pointer-events: none;
+  transition: opacity 0.6s;
+  opacity: 1;
+}
+body.intro-started #dark-overlay {
+  opacity: 0;
+  transition: opacity 1.2s;
+}
+
+body:not(.intro-started):not(.portrait) #info,
+body:not(.intro-started):not(.portrait) #landscape-warning,
+body:not(.intro-started):not(.portrait) .main-content,
+body:not(.intro-started):not(.portrait) .text-ring,
+body:not(.intro-started):not(.portrait) .galaxy-points,
+body:not(.intro-started):not(.portrait) .starfield {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+body:not(.intro-started):not(.portrait) #dark-overlay {
+  display: block;
+  opacity: 1;
+}
+body.portrait #dark-overlay {
+  display: none !important;
+  opacity: 0 !important;
+}
+body.landscape-warning-active #container canvas,
+body.portrait #container canvas {
+  filter: blur(12px) brightness(0.5) grayscale(0.3);
+  opacity: 0.3;
+  transition: filter 0.7s, opacity 0.7s cubic-bezier(.4,2,.6,1);
+}
+body:not(.landscape-warning-active):not(.portrait) #container canvas {
+  filter: blur(0) brightness(1) grayscale(0);
+  opacity: 1;
+  transition: filter 1.2s, opacity 1.2s cubic-bezier(.4,2,.6,1);
+}
+
+body.landscape-warning-active #landscape-warning {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body:not(.landscape-warning-active) #container canvas {
+  filter: blur(0) brightness(1) grayscale(0);
+  opacity: 1;
+  transition: filter 1.2s, opacity 1.2s cubic-bezier(.4,2,.6,1);
+}
+
+.rotate-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 18px auto;
+  background: url('data:image/svg+xml;utf8,<svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="16" width="32" height="24" rx="6" fill="%23fff" stroke="%2300eaff" stroke-width="2"/><path d="M28 8v4" stroke="%2300eaff" stroke-width="2" stroke-linecap="round"/><path d="M28 44v4" stroke="%2300eaff" stroke-width="2" stroke-linecap="round"/><path d="M8 28h4" stroke="%2300eaff" stroke-width="2" stroke-linecap="round"/><path d="M44 28h4" stroke="%2300eaff" stroke-width="2" stroke-linecap="round"/><path d="M18 38l-4 4" stroke="%23a259f7" stroke-width="2" stroke-linecap="round"/><path d="M38 38l4 4" stroke="%23a259f7" stroke-width="2" stroke-linecap="round"/><path d="M18 18l-4-4" stroke="%23a259f7" stroke-width="2" stroke-linecap="round"/><path d="M38 18l4-4" stroke="%23a259f7" stroke-width="2" stroke-linecap="round"/></svg>') center/contain no-repeat;
+  animation: rotate-phone 1.6s infinite cubic-bezier(.4,2,.6,1);
+}
+@keyframes rotate-phone {
+  0% { transform: rotate(-18deg); }
+  20% { transform: rotate(18deg); }
+  40% { transform: rotate(-18deg); }
+  100% { transform: rotate(-18deg); }
+} 
