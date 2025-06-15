@@ -1088,7 +1088,7 @@ let galaxyAudio = null;
 
 function playGalaxyAudio() {
   if (!galaxyAudio) {
-    galaxyAudio = new Audio("https://files.thanhtuan.click/1749558540633_audioclip-1749558428000-58514.mp4");
+    galaxyAudio = new Audio("clip-1749558428000-58514.mp4");
     galaxyAudio.loop = true;
     galaxyAudio.volume = 0.7;
   }
