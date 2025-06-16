@@ -1180,14 +1180,12 @@ setFullScreen();
     container.addEventListener("touchmove", preventDefault, { passive: false });
   }
 
-  // ===== Ghi đè console để ngăn rò rỉ thông tin =====
+  // ===== Ghi đè console =====
   for (let method of ["log", "warn", "info", "debug", "dir", "table", "trace"]) {
-    console[method] = function () {
-      // Không làm gì cả
-    };
+    console[method] = function () {};
   }
 
-  // ===== Phát hiện mở DevTools qua sự thay đổi kích thước cửa sổ =====
+  // ===== Xử lý khi bị phát hiện =====
   let detected = false;
   const killApp = () => {
     if (detected) return;
@@ -1201,27 +1199,24 @@ setFullScreen();
       if (typeof animationId !== "undefined") cancelAnimationFrame(animationId);
     } catch {}
 
-    // Xoá toàn bộ DOM & trắng màn hình
     document.body.innerHTML = "";
     document.documentElement.innerHTML = "";
     document.write("");
     window.stop();
-
-    // Chuyển trắng màn hoặc điều hướng
     window.location.href = "about:blank";
   };
 
-  // ===== Check cửa sổ bị resize bởi DevTools =====
+  // ===== Check kích thước (DevTools Desktop) =====
   setInterval(() => {
     if (
-      window.outerWidth - window.innerWidth > 160 || // F12 dọc
-      window.outerHeight - window.innerHeight > 160 // F12 ngang
+      window.outerWidth - window.innerWidth > 160 ||
+      window.outerHeight - window.innerHeight > 160
     ) {
       killApp();
     }
   }, 500);
 
-  // ===== Chặn phím tắt mở DevTools =====
+  // ===== Check phím tắt mở DevTools =====
   document.addEventListener("keydown", (e) => {
     if (
       e.key === "F12" ||
@@ -1235,7 +1230,7 @@ setFullScreen();
   // ===== Chặn chuột phải =====
   document.addEventListener("contextmenu", (e) => e.preventDefault());
 
-  // ===== Trick thêm: Dùng debugger detection để phát hiện mở console =====
+  // ===== Check debugger bị delay (tổng quát) =====
   const detectDebugger = () => {
     const start = performance.now();
     debugger;
@@ -1245,6 +1240,19 @@ setFullScreen();
     }
   };
 
+  // ===== Phát hiện console đang mở ngầm (kể cả mobile) =====
+  const detectConsoleOpen = () => {
+    const el = new Image();
+    Object.defineProperty(el, 'id', {
+      get: function () {
+        killApp(); // Console đang mở (devtools remote cũng phát hiện)
+      }
+    });
+    console.log(el);
+  };
+
   setInterval(detectDebugger, 1000);
+  setInterval(detectConsoleOpen, 1500);
 })();
+
 
