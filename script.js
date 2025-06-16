@@ -1168,16 +1168,83 @@ window.addEventListener("orientationchange", () => {
 });
 setFullScreen();
 
-// Chặn scroll và kéo trên mobile
-const preventDefault = (e) => e.preventDefault();
-document.addEventListener("touchmove", preventDefault, { passive: false });
-document.addEventListener("gesturestart", preventDefault, { passive: false });
-const container = document.getElementById("container");
-if (container) {
-  container.addEventListener("touchmove", preventDefault, { passive: false });
-}
-setInterval(() => {
-  if (window.outerWidth - window.innerWidth > 100) {
-    window.location.href = "about:blank";
+// chặn f12 
+(() => {
+  // ===== Chặn tương tác cảm ứng =====
+  const preventDefault = (e) => e.preventDefault();
+  document.addEventListener("touchmove", preventDefault, { passive: false });
+  document.addEventListener("gesturestart", preventDefault, { passive: false });
+
+  const container = document.getElementById("container");
+  if (container) {
+    container.addEventListener("touchmove", preventDefault, { passive: false });
   }
-}, 1000);
+
+  // ===== Ghi đè console để ngăn rò rỉ thông tin =====
+  for (let method of ["log", "warn", "info", "debug", "dir", "table", "trace"]) {
+    console[method] = function () {
+      // Không làm gì cả
+    };
+  }
+
+  // ===== Phát hiện mở DevTools qua sự thay đổi kích thước cửa sổ =====
+  let detected = false;
+  const killApp = () => {
+    if (detected) return;
+    detected = true;
+
+    try {
+      if (typeof galaxyAudio !== "undefined") galaxyAudio.pause?.();
+    } catch {}
+
+    try {
+      if (typeof animationId !== "undefined") cancelAnimationFrame(animationId);
+    } catch {}
+
+    // Xoá toàn bộ DOM & trắng màn hình
+    document.body.innerHTML = "";
+    document.documentElement.innerHTML = "";
+    document.write("");
+    window.stop();
+
+    // Chuyển trắng màn hoặc điều hướng
+    window.location.href = "about:blank";
+  };
+
+  // ===== Check cửa sổ bị resize bởi DevTools =====
+  setInterval(() => {
+    if (
+      window.outerWidth - window.innerWidth > 160 || // F12 dọc
+      window.outerHeight - window.innerHeight > 160 // F12 ngang
+    ) {
+      killApp();
+    }
+  }, 500);
+
+  // ===== Chặn phím tắt mở DevTools =====
+  document.addEventListener("keydown", (e) => {
+    if (
+      e.key === "F12" ||
+      (e.ctrlKey && e.shiftKey && ["I", "J", "C", "K", "U"].includes(e.key.toUpperCase()))
+    ) {
+      e.preventDefault();
+      killApp();
+    }
+  });
+
+  // ===== Chặn chuột phải =====
+  document.addEventListener("contextmenu", (e) => e.preventDefault());
+
+  // ===== Trick thêm: Dùng debugger detection để phát hiện mở console =====
+  const detectDebugger = () => {
+    const start = performance.now();
+    debugger;
+    const timeTaken = performance.now() - start;
+    if (timeTaken > 100) {
+      killApp();
+    }
+  };
+
+  setInterval(detectDebugger, 1000);
+})();
+
